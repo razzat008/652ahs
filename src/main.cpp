@@ -1,4 +1,4 @@
-#include <iostream>
+#include "../lib/config.h"
 
 int main (int argc, char *argv[]) {
   

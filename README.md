@@ -1,2 +1,2 @@
 # 652ahs
-Implementation of SHA256 as an end-sem project
+This project is an end-semester project done in 1st year 2nd semester at Kathmandu University.

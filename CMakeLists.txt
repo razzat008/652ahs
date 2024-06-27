@@ -1,11 +1,6 @@
-cmake_minimum_required(VERSION 3.10)
-
-project(652ahs cpp)
-
-# Setup the list of source files
 cmake_minimum_required(VERSION 3.14)
 
-project(652ahs VERSION 1.0)
+project(652ahs)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
@@ -29,11 +24,9 @@ file(GLOB_RECURSE SOURCES src/*.cpp ${IMGUI_SOURCES} ${IMGUI_IMPL_SOURCES})
 add_executable(652ahs ${SOURCES} ${IMGUI_SOURCES} ${IMGUI_IMPL_SOURCES})
 
 # Link libraries
-target_link_libraries(652ahs PRIVATE glfw OpenGL::GL SQLite3)
+target_link_libraries(652ahs PRIVATE glfw OpenGL::GL)
 
 # Include directories
 target_include_directories(
   652ahs PRIVATE ${CMAKE_SOURCE_DIR}/include ${IMGUI_INCLUDE_DIR}
-                    ${BOOST_ASIO_INCLUDE_DIR})
-# set(LEARN_CMAKE_SOURCES src/*.cpp)
-add_executable(652ahs src/main.cpp)
+                 ${BOOST_ASIO_INCLUDE_DIR})

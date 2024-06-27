@@ -1,8 +1,8 @@
-#include <iostream>
-#include <vector>
-#include <iomanip>
-#include <sstream>
 #include <bitset>
-#include <cstring>
 #include <cstdint>
+#include <cstring>
 #include <fstream>
+#include <iomanip>
+#include <iostream>
+#include <sstream>
+#include <vector>

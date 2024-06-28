@@ -1,4 +1,4 @@
-#include "../lib/config.h"
+#include "../libs/config.h"
 
 class SHA256 {
 public:

@@ -1,34 +1,43 @@
 # 652ahs
-This project is an end-semester project done in 1st year 2nd semester at Kathmandu University.
+
+This is an end-semester project done in 1st year 2nd semester at Kathmandu University.
 
 # Building
 
 ## Prerequisites
+
 - CMake
 - SQLite3
 - OpenGL
 
 ## Setting up
-- Clone the repository
+
+- To clone the repo and initialize all submodules, run:
+
 ```bash
-git clone https://github.com/razzat08/652ahs
+git clone --recurse-submodules https://github.com/razzat008/652ahs
 ```
 
-- ```cd``` into **652ahs** and
+- `cd` into **652ahs** and
+
 ```bash
 cmake -S . -B build/
 ```
 
-- ```cd``` into **build/** and run the generated **MakeFile**
+- `cd` into **build/** and run the generated **MakeFile**
+
 ```bash
 make
 ```
+
 and to run the obtained binary
+
 ```bash
 ./652ahs
 ```
 
 _Below is the rough demonstration of the filetree of the project_
+
 ```
 652ahs/
 ├── CMakeLists.txt

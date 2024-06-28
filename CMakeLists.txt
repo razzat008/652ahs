@@ -24,7 +24,7 @@ file(GLOB_RECURSE SOURCES src/*.cpp ${IMGUI_SOURCES} ${IMGUI_IMPL_SOURCES})
 add_executable(652ahs ${SOURCES} ${IMGUI_SOURCES} ${IMGUI_IMPL_SOURCES})
 
 # Link libraries
-target_link_libraries(652ahs PRIVATE glfw OpenGL::GL)
+target_link_libraries(652ahs PRIVATE glfw OpenGL::GL sqlite3)
 
 # Include directories
 target_include_directories(

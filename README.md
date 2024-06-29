@@ -41,7 +41,6 @@ _Below is the rough demonstration of the filetree of the project_
 ```
 652ahs/
 ├── CMakeLists.txt
-├── CMakeLists.txt
 ├── src/
 │   └── main.cpp
 │   └── ...

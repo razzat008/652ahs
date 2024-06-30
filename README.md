@@ -16,7 +16,7 @@ This is an end-semester project done in 1st year 2nd semester at Kathmandu Unive
 sudo pacman -S sqlite3
 
 #Debian Based systems:
-sudo apt install sqlite3
+sudo apt install libsqlite3-dev
 ```
 
 

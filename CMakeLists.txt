@@ -11,10 +11,11 @@ find_package(SQLite3 REQUIRED)
 
 # ImGui
 set(IMGUI_DIR ${CMAKE_SOURCE_DIR}/libs/imgui)
-set(SQLITE_DIR ${CMAKE_SOURCE_DIR}/libs/sqlite)
-set(GLFW_DIR ${CMAKE_SOURCE_DIR}/libs/glfw)
 set(IMGUI_INCLUDE_DIR ${IMGUI_DIR} ${IMGUI_DIR}/backends)
-# set(IMGUI_INCLUDE_DIR ${SQLITE_DIR} ${SQLITE_DIR}/)
+
+# glfw
+set(GLFW_DIR ${CMAKE_SOURCE_DIR}/libs/glfw)
+
 file(GLOB IMGUI_SOURCES ${IMGUI_DIR}/*.cpp)
 set(IMGUI_IMPL_SOURCES ${IMGUI_DIR}/backends/imgui_impl_opengl3.cpp
                        ${IMGUI_DIR}/backends/imgui_impl_glfw.cpp)

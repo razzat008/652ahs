@@ -1,5 +1,12 @@
 #include "../libs/config.h" // sourcing all the libraries
 #include <iostream>
+#include <stdio.h>
+
+static void glfw_error_callback(int error, const char* description)
+{
+    fprintf(stderr, "GLFW Error %d: %s\n", error, description);
+}
+
 
 class SHA256 {
 public:
@@ -165,6 +172,36 @@ uint32_t SHA256::gamma1(uint32_t x) {
 
 int main() {
 
+  //imgui initializations
+  glfwSetErrorCallback(glfw_error_callback);
+  if (!glfwInit())
+    return 1;
+
+        // Decide GL+GLSL versions
+    #if defined(IMGUI_IMPL_OPENGL_ES2)
+        // GL ES 2.0 + GLSL 100
+        const char* glsl_version = "#version 100";
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
+        glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_ES_API);
+    #elif defined(__APPLE__)
+        // GL 3.2 + GLSL 150
+        const char* glsl_version = "#version 150";
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
+        glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);  // 3.2+ only
+        glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);            // Required on Mac
+    #else
+        // GL 3.0 + GLSL 130
+        const char* glsl_version = "#version 130";
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
+        //glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);  // 3.2+ only
+        //glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);            // 3.0+ only
+    #endif
+
+
+
   // connecting with database
   sqlite3 *db;
   int dbOpen = sqlite3_open("hashfile_db", &db);
@@ -178,48 +215,137 @@ int main() {
   std::string file;
   char chk;
 
-  std::cout << " What do you want to hash ? (File (f) or input text (t) )\n=>";
-  std::cin >> chk;
+  // Create window with graphics context
+  GLFWwindow* window = glfwCreateWindow(1280, 720, "Hashing Application", nullptr, nullptr);
+  if (window == nullptr)
+    return 1;
+    
+  glfwMakeContextCurrent(window);
 
-  switch (chk) {
+  // Setup Dear ImGui context
+  IMGUI_CHECKVERSION();
+  ImGui::CreateContext();
+  ImGuiIO& io = ImGui::GetIO(); (void)io;
+  io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
 
-  case 't': {
+  // Setup Dear ImGui style
+  // ImGui::StyleColorsDark();
+  ImGui::StyleColorsLight();
 
-    std::cout << " Enter the text to hash: ";
-    std::cin.ignore();
-    std::getline(std::cin, input);
-    break;
-  }
+  // Setup Platform/Renderer backends
+  ImGui_ImplGlfw_InitForOpenGL(window, true);
+  ImGui_ImplOpenGL3_Init(glsl_version);
 
-  case 'f': {
+  ImVec4 clear_color = ImVec4(1.00f, 1.00f, 1.00f, 1.00f);
 
-    std::cout << " Enter the file to hash: ";
-    std::cin >> file;
+  char UserInput; //this is a dummy input var for now replace this with the input string for hash
+  bool display = false;
 
-    std::ifstream inputFile(file, std::ios::binary);
-    if (!inputFile) {
-      showerror<const char *, int>(__FILE__, __LINE__);
-      std::cerr << " Error opening file: " << file << std::endl;
-      return EXIT_FAILURE;
+  while (!glfwWindowShouldClose(window))
+  {
+    glfwPollEvents();
+
+    // Start the Dear ImGui frame
+    ImGui_ImplOpenGL3_NewFrame();
+    ImGui_ImplGlfw_NewFrame();
+    ImGui::NewFrame();
+
+    //Show a simple window that we create ourselves. We use a Begin/End pair to create a named window.    
+    ImVec2 center = ImGui::GetMainViewport()->GetCenter();
+    ImGui::SetNextWindowSize(ImVec2(500, 500));
+    ImGui::SetNextWindowPos(center, ImGuiCond_Always, ImVec2(0.5f, 0.5f));
+    {
+      ImGui::Begin("Test", NULL, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse);
+      
+      ImGui::Text("This is some useful text. Here we will take a user text input for now and display the generated hash.\n");
+
+      ImGui::Text("What do you want to hash ? (File (f) or input text (t) ");
+
+      // Suraj - I have commented this part we need to work together to implement via the GUI instead.
+
+      // std::cin >> chk;
+
+      // switch (chk) {
+
+      // case 't': {
+
+      //   std::cout << " Enter the text to hash: ";
+      //   std::cin.ignore();
+      //   std::getline(std::cin, input);
+      //   break;
+      // }
+
+      // case 'f': {
+
+      //   std::cout << " Enter the file to hash: ";
+      //   std::cin >> file;
+
+      //   std::ifstream inputFile(file, std::ios::binary);
+      //   if (!inputFile) {
+      //     showerror<const char *, int>(__FILE__, __LINE__);
+      //     std::cerr << " Error opening file: " << file << std::endl;
+      //     return EXIT_FAILURE;
+      //   }
+
+      //   std::stringstream buffer;
+      //   buffer << inputFile.rdbuf();
+      //   input = buffer.str();
+
+      //   inputFile.close();
+      //   break;
+      // }
+
+      // default:
+
+      //   std::cerr << " Invalid Selection!!!";
+      //   return EXIT_FAILURE;
+      // }
+
+      //Below are the buttons that we can use to select whether to has files or the text. More work needed on this to implement logic.
+      if(ImGui::Button("File", ImVec2(50, 70))){
+        display = true;
+      }
+      if(ImGui::Button("Text", ImVec2(50, 70))){
+        display = true;
+      }
+
+      if(display){
+        ImGui::Text("button pressed!!!");    
+      }
+
+      //Suraj - Again I have commented the code below. We need more discussion on this for the integration of GUI into the logic.
+
+      // sha256.update(input);
+      // std::string hash = sha256.digest();
+
+      // std::cout << " SHA-256 hash: " << hash << std::endl;
+    
+    ImGui::End();
     }
 
-    std::stringstream buffer;
-    buffer << inputFile.rdbuf();
-    input = buffer.str();
+  // Rendering
+  ImGui::Render();
+  int display_w, display_h;
+  glfwGetFramebufferSize(window, &display_w, &display_h);
+  glViewport(0, 0, display_w, display_h);    
 
-    inputFile.close();
-    break;
+  //sets the color in the context window as declared in clear_color variable of ImVec4 type. Change the value to change the color of GUI.
+  glClearColor(clear_color.x * clear_color.w, clear_color.y * clear_color.w, clear_color.z * clear_color.w, clear_color.w);
+  glClear(GL_COLOR_BUFFER_BIT);
+
+  ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+  glfwSwapBuffers(window);
+
   }
+  
+  // Cleanup
+  ImGui_ImplOpenGL3_Shutdown();
+  ImGui_ImplGlfw_Shutdown();
+  ImGui::DestroyContext();
 
-  default:
+  glfwDestroyWindow(window);
+  glfwTerminate();
 
-    std::cerr << " Invalid Selection!!!";
-    return EXIT_FAILURE;
-  }
 
-  sha256.update(input);
-  std::string hash = sha256.digest();
-
-  std::cout << " SHA-256 hash: " << hash << std::endl;
   return EXIT_SUCCESS;
 }

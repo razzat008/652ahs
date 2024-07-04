@@ -74,14 +74,14 @@ int main() {
   ImGui_ImplGlfw_InitForOpenGL(window, true);
   ImGui_ImplOpenGL3_Init(glsl_version);
 
-  ImVec4 clear_color = ImVec4(1.00f, 1.00f, 1.00f, 1.00f);
-
   char UserInput; //this is a dummy input var for now replace this with the input string for hash
   bool display = false;
 
   while (!glfwWindowShouldClose(window))
   {
     glfwPollEvents();
+    glClearColor(1.0f, 1.0f, 1.0f, 1.00f);
+    glClear(GL_COLOR_BUFFER_BIT);
 
     // Start the Dear ImGui frame
     ImGui_ImplOpenGL3_NewFrame();
@@ -123,9 +123,6 @@ int main() {
   glfwGetFramebufferSize(window, &display_w, &display_h);
   glViewport(0, 0, display_w, display_h);    
 
-  //sets the color in the context window as declared in clear_color variable of ImVec4 type. Change the value to change the color of GUI.
-  glClearColor(clear_color.x * clear_color.w, clear_color.y * clear_color.w, clear_color.z * clear_color.w, clear_color.w);
-  glClear(GL_COLOR_BUFFER_BIT);
 
   ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
   glfwSwapBuffers(window);

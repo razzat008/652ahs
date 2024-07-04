@@ -232,6 +232,9 @@ int main() {
   // ImGui::StyleColorsDark();
   ImGui::StyleColorsLight();
 
+  //adding fonts
+  io.Fonts->AddFontFromFileTTF("../assets/fonts/Roboto.ttf", 13.5f);
+
   // Setup Platform/Renderer backends
   ImGui_ImplGlfw_InitForOpenGL(window, true);
   ImGui_ImplOpenGL3_Init(glsl_version);
@@ -302,9 +305,10 @@ int main() {
       // }
 
       //Below are the buttons that we can use to select whether to has files or the text. More work needed on this to implement logic.
-      if(ImGui::Button("File", ImVec2(50, 70))){
-        display = true;
-      }
+      ImGui::Text("Enter the text: \n");
+
+      ImGui::InputText("##userinput",&UserInput, 50);
+
       if(ImGui::Button("Text", ImVec2(50, 70))){
         display = true;
       }

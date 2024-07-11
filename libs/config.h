@@ -14,7 +14,7 @@
 
 #include <GLFW/glfw3.h>
 #include <sqlite3.h>
-
+#include <string>
 // namespace {
 // char *file_name = "hashfile_db";
 // }

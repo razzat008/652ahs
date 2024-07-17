@@ -1,3 +1,6 @@
+#ifndef CONFIG_H
+#define CONFIG_H
+
 #include <bitset>
 #include <cstdint>
 #include <cstring>
@@ -7,6 +10,7 @@
 #include <iostream>
 #include <sstream>
 #include <vector>
+#include <ctime>
 
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
@@ -28,3 +32,5 @@ template <typename T, typename U> inline void showerror(T file, U line) {
   std::cerr << " FILE: [ " << file << " ] At line: [ " << line - 1
             << " ]\n Error Message:" << std::endl;
 }
+
+#endif

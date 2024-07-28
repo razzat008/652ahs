@@ -12,7 +12,7 @@ This is an end-semester project done in 1st year 2nd semester at Kathmandu Unive
 
 ```bash
 #Debian Based systems:
-sudo apt install libxkbcommon-dev mesa-utils libgl1-mesa-dev libglfw3-dev
+sudo apt install mesa-utils xorg-dev libxkbcommon-dev libgl1-mesa-dev libglu1-mesa-dev libglfw3-dev   
 ```
 
 - SQLite3\

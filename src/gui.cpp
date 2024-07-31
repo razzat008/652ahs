@@ -44,7 +44,7 @@ void runGUI() {
     }
 
     //defining states
-    bool dark_mode = true;
+    bool dark_mode = false; //set dark mode as false by default during development for ease of design
 
     // Main loop
     while (!glfwWindowShouldClose(window)) {
@@ -63,45 +63,14 @@ void runGUI() {
         //setup tje color theme
         SetupImGuiStyle(&dark_mode);
 
-        // Set the next window size and position to cover the whole main window
-        ImGui::SetNextWindowPos(ImVec2(0, 0));
-        ImGui::SetNextWindowSize(ImVec2(static_cast<float>(window_width), static_cast<float>(window_height)));
-
-        // UI Code
-        ImGui::Begin("SHA-256 Hasher", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse);
-
-        ImGui::Text("Dark Mode:");
-        ToggleButton(" some text ", &dark_mode);
-
-        static char inputText[256] = "";
-        static std::string hashResult;
-
-        ImGui::Text("Text to hash:");
-        ImGui::InputText("##TextToHash", inputText, IM_ARRAYSIZE(inputText));
-
-        if (ImGui::Button("Hash")) {
-            SHA256 sha256;
-            sha256.update(std::string(inputText));
-            hashResult = sha256.digest();
-            // Insert into database
-            time_t now = time(0);
-            std::string dt = ctime(&now);
-            dt.pop_back(); // remove newline character
-            if (!db.insertData(inputText, hashResult, dt)) {
-                std::cerr << "Failed to insert data into database" << std::endl;
-            }
-        }
-
-        ImGui::Text("Hash: %s", hashResult.c_str());
-
-        ImGui::End();
+        runMainWindow(&dark_mode);
 
         // Rendering
         ImGui::Render();
         int display_w, display_h;
         glfwGetFramebufferSize(window, &display_w, &display_h);
         glViewport(0, 0, display_w, display_h);
-        glClearColor(0.45f, 0.55f, 0.60f, 1.00f);
+        glClearColor(1.0f, 1.0f, 1.0f, 1.00f);
         glClear(GL_COLOR_BUFFER_BIT);
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
@@ -115,6 +84,68 @@ void runGUI() {
 
     glfwDestroyWindow(window);
     glfwTerminate();
+}
+
+void runMainWindow(bool* dark_mode)
+{
+    // Initialize database
+    Database db("hashes.db");
+    if (!db.init()) {
+        std::cerr << "Failed to initialize database" << std::endl;
+        return;
+    }
+
+	//Each of the two main windows will regarded as child
+    // Define the margin for the child windows in percentage of the viewport
+    const float child_margin_percentage = 0.02f; // 2% margin
+
+    // Get the size of the viewport
+    ImVec2 viewport_size = ImGui::GetIO().DisplaySize;
+
+    // Calculate the margin in pixels
+    float child_margin_x = viewport_size.x * child_margin_percentage;
+    float child_margin_y = viewport_size.y * child_margin_percentage;
+
+    // Calculate child window sizes
+    ImVec2 child_size((viewport_size.x - child_margin_x * 3) / 2, viewport_size.y - child_margin_y * 2);
+
+    // First child window
+    ImGui::SetNextWindowPos(ImVec2(child_margin_x, child_margin_y));
+    ImGui::SetNextWindowSize(child_size);
+    ImGui::Begin("Child1", nullptr, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoTitleBar);
+
+    ImGui::Text("Dark Mode:");
+    ToggleButton(" some text ", dark_mode);
+
+    static char inputText[256] = "";
+    static std::string hashResult;
+
+    ImGui::Text("Text to hash:");
+    ImGui::InputText("##TextToHash", inputText, IM_ARRAYSIZE(inputText));
+
+    if (ImGui::Button("Hash")) {
+        SHA256 sha256;
+        sha256.update(std::string(inputText));
+        hashResult = sha256.digest();
+        // Insert into database
+        time_t now = time(0);
+        std::string dt = ctime(&now);
+        dt.pop_back(); // remove newline character
+        if (!db.insertData(inputText, hashResult, dt)) {
+            std::cerr << "Failed to insert data into database" << std::endl;
+        }
+    }
+
+    ImGui::Text("Hash: %s", hashResult.c_str());
+
+    ImGui::End();
+
+    // Second child window
+    ImGui::SetNextWindowPos(ImVec2(child_margin_x * 2 + child_size.x, child_margin_y));
+    ImGui::SetNextWindowSize(child_size);
+    ImGui::Begin("Child2", nullptr, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoTitleBar);
+    ImGui::Text("This is the second child window.");
+    ImGui::End();
 }
 
 void ToggleButton(const char* str_id, bool* v)

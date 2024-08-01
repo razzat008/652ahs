@@ -3,6 +3,8 @@
 #include "db.h"
 #include "../libs/config.h"
 
+void drop_callback(GLFWwindow* window, int count, const char** paths);
+
 void runGUI() {
     // Initialize GLFW
     if (!glfwInit()) {
@@ -21,6 +23,7 @@ void runGUI() {
     // Make the window's context current
     glfwMakeContextCurrent(window);
     glfwSwapInterval(1); // Enable vsync
+	glfwSetDropCallback(window, drop_callback);
 
     // Setup Dear ImGui context
     IMGUI_CHECKVERSION();
@@ -125,6 +128,11 @@ void runMainWindow(bool* dark_mode)
     ImGui::Text("Text to hash:");
     ImGui::InputText("##TextToHash", inputText, IM_ARRAYSIZE(inputText));
 
+	//drag and drop window
+	ImGui::BeginChild("Drag and Drop", ImVec2(600, 100), true);
+	dropWindow();
+	ImGui::EndChild();
+
     if (ImGui::Button("Hash")) {
         SHA256 sha256;
         sha256.update(std::string(inputText));
@@ -138,6 +146,8 @@ void runMainWindow(bool* dark_mode)
         }
     }
 
+	
+	
     ImGui::End();
 
     // Second child window
@@ -145,10 +155,42 @@ void runMainWindow(bool* dark_mode)
     ImGui::SetNextWindowSize(second_child_size);
     ImGui::Begin("Child2", nullptr, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoTitleBar);
 
-    ImGui::Text("Hash:");
+
+	ImGui::BeginChild("Hash Output", ImVec2(690, 150), true);
+	ImGui::Text("Hash:");
 	ImGui::TextWrapped(hashResult.c_str());
+	ImGui::EndChild();
+
+	// link with the backend and edit or add as per necessary
+	ImGui::Text("\n\nDetails of Operation:\n\n");
+	ImGui::Text("Input Length:\n\n");
+	ImGui::Text("File Size:\n\n");
+	ImGui::Text("Date:\n\n");
+    
 
     ImGui::End();
+}
+
+std::vector<std::string> droppedFiles;
+
+void drop_callback(GLFWwindow* window, int count, const char** paths) {
+    droppedFiles.clear();
+    for (int i = 0; i < count; ++i) {
+        droppedFiles.push_back(std::string(paths[i]));
+    }
+}
+
+void dropWindow() {
+    
+        if (!droppedFiles.empty()) {
+            ImGui::Text("Dropped files:");
+            for (const auto& file : droppedFiles) {
+                ImGui::Text("%s", file.c_str());
+            }
+        } else {
+            ImGui::Text("Drag and drop files here.");
+        }
+    
 }
 
 void ToggleButton(const char* str_id, bool* v)
@@ -312,7 +354,7 @@ void SetupImGuiStyle(bool* dark_mode)
 	style.Colors[ImGuiCol_Text] = ImVec4(0.0f, 0.0f, 0.0f, 1.0f);
 	style.Colors[ImGuiCol_TextDisabled] = ImVec4(0.6000000238418579f, 0.6000000238418579f, 0.6000000238418579f, 1.0f);
 	style.Colors[ImGuiCol_WindowBg] = ImVec4(0.9372549057006836f, 0.9372549057006836f, 0.9372549057006836f, 1.0f);
-	style.Colors[ImGuiCol_ChildBg] = ImVec4(0.0f, 0.0f, 0.0f, 0.0f);
+	style.Colors[ImGuiCol_ChildBg] = ImVec4(1.0f, 1.0f, 1.0f, 1.00f);
 	style.Colors[ImGuiCol_PopupBg] = ImVec4(1.0f, 1.0f, 1.0f, 0.9800000190734863f);
 	style.Colors[ImGuiCol_Border] = ImVec4(0.0f, 0.0f, 0.0f, 0.300000011920929f);
 	style.Colors[ImGuiCol_BorderShadow] = ImVec4(0.0f, 0.0f, 0.0f, 0.0f);

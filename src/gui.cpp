@@ -106,12 +106,16 @@ void runMainWindow(bool* dark_mode)
     float child_margin_x = viewport_size.x * child_margin_percentage;
     float child_margin_y = viewport_size.y * child_margin_percentage;
 
-    // Calculate child window sizes
-    ImVec2 child_size((viewport_size.x - child_margin_x * 3) / 2, viewport_size.y - child_margin_y * 2);
+    // Calculate the size of the first child window (60% of the area)
+	ImVec2 first_child_size((viewport_size.x * 0.6f) - (child_margin_x * 1.5f), viewport_size.y - child_margin_y * 2);
+
+	// Calculate the size of the second child window (40% of the area)
+	ImVec2 second_child_size((viewport_size.x * 0.4f) - (child_margin_x * 1.5f), viewport_size.y - child_margin_y * 2);
+
 
     // First child window
     ImGui::SetNextWindowPos(ImVec2(child_margin_x, child_margin_y));
-    ImGui::SetNextWindowSize(child_size);
+    ImGui::SetNextWindowSize(first_child_size);
     ImGui::Begin("Child1", nullptr, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoTitleBar);
 
     ImGui::Text("Dark Mode:");
@@ -142,8 +146,8 @@ void runMainWindow(bool* dark_mode)
     ImGui::End();
 
     // Second child window
-    ImGui::SetNextWindowPos(ImVec2(child_margin_x * 2 + child_size.x, child_margin_y));
-    ImGui::SetNextWindowSize(child_size);
+    ImGui::SetNextWindowPos(ImVec2(child_margin_x * 2 + first_child_size.x, child_margin_y));
+    ImGui::SetNextWindowSize(second_child_size);
     ImGui::Begin("Child2", nullptr, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoTitleBar);
     ImGui::Text("This is the second child window.");
     ImGui::End();

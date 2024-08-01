@@ -25,12 +25,10 @@ void runGUI() {
     // Setup Dear ImGui context
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
-    ImGuiIO& io = ImGui::GetIO(); (void)io;
+    ImGuiIO& io = ImGui::GetIO();
 
-    // Increase font size
-    ImGui::GetStyle().ScaleAllSizes(1.5f); // Scale all UI elements by 1.5 times
-    ImFont* font = io.Fonts->AddFontDefault();
-    font->Scale = 1.5f; // Scale the font size
+    // ImFont* font = io.Fonts->AddFontDefault();
+	io.Fonts->AddFontFromFileTTF("/home/sutha/Documents/652ahs/assets/fonts/Roboto.ttf", 20.0f);
 
     // Setup Platform/Renderer bindings
     ImGui_ImplGlfw_InitForOpenGL(window, true);
@@ -192,7 +190,7 @@ void SetupImGuiStyle(bool* dark_mode)
 	ImGuiStyle& style = ImGui::GetStyle();
 	
   if(*dark_mode){
-  style.Alpha = 1.0f;
+  	style.Alpha = 1.0f;
 	style.DisabledAlpha = 0.6000000238418579f;
 	style.WindowPadding = ImVec2(8.0f, 8.0f);
 	style.WindowRounding = 0.0f;

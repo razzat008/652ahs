@@ -28,8 +28,8 @@ void runGUI() {
     ImGuiIO& io = ImGui::GetIO();
 
     // ImFont* font = io.Fonts->AddFontDefault();
-	io.Fonts->AddFontFromFileTTF("/home/sutha/Documents/652ahs/assets/fonts/Roboto.ttf", 20.0f);
-
+	// io.Fonts->AddFontFromFileTTF("../assets/fonts/Roboto.ttf", 20.0f);
+	io.Fonts->AddFontFromFileTTF("../assets/fonts/JetBrainsMono-Regular.ttf", 20.0f);
     // Setup Platform/Renderer bindings
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL3_Init("#version 130");

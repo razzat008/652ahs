@@ -3,6 +3,8 @@
 #include "db.h"
 #include "../libs/config.h"
 
+void drop_callback(GLFWwindow* window, int count, const char** paths);
+
 void runGUI() {
     // Initialize GLFW
     if (!glfwInit()) {
@@ -21,17 +23,16 @@ void runGUI() {
     // Make the window's context current
     glfwMakeContextCurrent(window);
     glfwSwapInterval(1); // Enable vsync
+	glfwSetDropCallback(window, drop_callback);
 
     // Setup Dear ImGui context
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
-    ImGuiIO& io = ImGui::GetIO(); (void)io;
+    ImGuiIO& io = ImGui::GetIO();
 
-    // Increase font size
-    ImGui::GetStyle().ScaleAllSizes(1.5f); // Scale all UI elements by 1.5 times
-    ImFont* font = io.Fonts->AddFontDefault();
-    font->Scale = 1.5f; // Scale the font size
-
+    // ImFont* font = io.Fonts->AddFontDefault();
+	// io.Fonts->AddFontFromFileTTF("../assets/fonts/Roboto.ttf", 20.0f);
+	io.Fonts->AddFontFromFileTTF("../assets/fonts/JetBrainsMono-Regular.ttf", 20.0f);
     // Setup Platform/Renderer bindings
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL3_Init("#version 130");
@@ -106,12 +107,16 @@ void runMainWindow(bool* dark_mode)
     float child_margin_x = viewport_size.x * child_margin_percentage;
     float child_margin_y = viewport_size.y * child_margin_percentage;
 
-    // Calculate child window sizes
-    ImVec2 child_size((viewport_size.x - child_margin_x * 3) / 2, viewport_size.y - child_margin_y * 2);
+    // Calculate the size of the first child window (60% of the area)
+	ImVec2 first_child_size((viewport_size.x * 0.6f) - (child_margin_x * 1.5f), viewport_size.y - child_margin_y * 2);
+
+	// Calculate the size of the second child window (40% of the area)
+	ImVec2 second_child_size((viewport_size.x * 0.4f) - (child_margin_x * 1.5f), viewport_size.y - child_margin_y * 2);
+
 
     // First child window
     ImGui::SetNextWindowPos(ImVec2(child_margin_x, child_margin_y));
-    ImGui::SetNextWindowSize(child_size);
+    ImGui::SetNextWindowSize(first_child_size);
     ImGui::Begin("Child1", nullptr, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoTitleBar);
 
     ImGui::Text("Dark Mode:");
@@ -122,6 +127,11 @@ void runMainWindow(bool* dark_mode)
 
     ImGui::Text("Text to hash:");
     ImGui::InputText("##TextToHash", inputText, IM_ARRAYSIZE(inputText));
+
+	//drag and drop window
+	ImGui::BeginChild("Drag and Drop", ImVec2(600, 100), true);
+	dropWindow();
+	ImGui::EndChild();
 
     if (ImGui::Button("Hash")) {
         SHA256 sha256;
@@ -136,16 +146,51 @@ void runMainWindow(bool* dark_mode)
         }
     }
 
-    ImGui::Text("Hash: %s", hashResult.c_str());
-
+	
+	
     ImGui::End();
 
     // Second child window
-    ImGui::SetNextWindowPos(ImVec2(child_margin_x * 2 + child_size.x, child_margin_y));
-    ImGui::SetNextWindowSize(child_size);
+    ImGui::SetNextWindowPos(ImVec2(child_margin_x * 2 + first_child_size.x, child_margin_y));
+    ImGui::SetNextWindowSize(second_child_size);
     ImGui::Begin("Child2", nullptr, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoTitleBar);
-    ImGui::Text("This is the second child window.");
+
+
+	ImGui::BeginChild("Hash Output", ImVec2(690, 150), true);
+	ImGui::Text("Hash:");
+	ImGui::TextWrapped(hashResult.c_str());
+	ImGui::EndChild();
+
+	// link with the backend and edit or add as per necessary
+	ImGui::Text("\n\nDetails of Operation:\n\n");
+	ImGui::Text("Input Length:\n\n");
+	ImGui::Text("File Size:\n\n");
+	ImGui::Text("Date:\n\n");
+    
+
     ImGui::End();
+}
+
+std::vector<std::string> droppedFiles;
+
+void drop_callback(GLFWwindow* window, int count, const char** paths) {
+    droppedFiles.clear();
+    for (int i = 0; i < count; ++i) {
+        droppedFiles.push_back(std::string(paths[i]));
+    }
+}
+
+void dropWindow() {
+    
+        if (!droppedFiles.empty()) {
+            ImGui::Text("Dropped files:");
+            for (const auto& file : droppedFiles) {
+                ImGui::Text("%s", file.c_str());
+            }
+        } else {
+            ImGui::Text("Drag and drop files here.");
+        }
+    
 }
 
 void ToggleButton(const char* str_id, bool* v)
@@ -187,7 +232,7 @@ void SetupImGuiStyle(bool* dark_mode)
 	ImGuiStyle& style = ImGui::GetStyle();
 	
   if(*dark_mode){
-  style.Alpha = 1.0f;
+  	style.Alpha = 1.0f;
 	style.DisabledAlpha = 0.6000000238418579f;
 	style.WindowPadding = ImVec2(8.0f, 8.0f);
 	style.WindowRounding = 0.0f;
@@ -309,7 +354,7 @@ void SetupImGuiStyle(bool* dark_mode)
 	style.Colors[ImGuiCol_Text] = ImVec4(0.0f, 0.0f, 0.0f, 1.0f);
 	style.Colors[ImGuiCol_TextDisabled] = ImVec4(0.6000000238418579f, 0.6000000238418579f, 0.6000000238418579f, 1.0f);
 	style.Colors[ImGuiCol_WindowBg] = ImVec4(0.9372549057006836f, 0.9372549057006836f, 0.9372549057006836f, 1.0f);
-	style.Colors[ImGuiCol_ChildBg] = ImVec4(0.0f, 0.0f, 0.0f, 0.0f);
+	style.Colors[ImGuiCol_ChildBg] = ImVec4(1.0f, 1.0f, 1.0f, 1.00f);
 	style.Colors[ImGuiCol_PopupBg] = ImVec4(1.0f, 1.0f, 1.0f, 0.9800000190734863f);
 	style.Colors[ImGuiCol_Border] = ImVec4(0.0f, 0.0f, 0.0f, 0.300000011920929f);
 	style.Colors[ImGuiCol_BorderShadow] = ImVec4(0.0f, 0.0f, 0.0f, 0.0f);

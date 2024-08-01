@@ -136,7 +136,8 @@ void runMainWindow(bool* dark_mode)
         }
     }
 
-    ImGui::Text("Hash: %s", hashResult.c_str());
+    ImGui::Text("Hash:");
+	ImGui::TextWrapped(hashResult.c_str());
 
     ImGui::End();
 

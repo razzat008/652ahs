@@ -138,16 +138,16 @@ void runMainWindow(bool* dark_mode)
         }
     }
 
-    ImGui::Text("Hash:");
-	ImGui::TextWrapped(hashResult.c_str());
-
     ImGui::End();
 
     // Second child window
     ImGui::SetNextWindowPos(ImVec2(child_margin_x * 2 + first_child_size.x, child_margin_y));
     ImGui::SetNextWindowSize(second_child_size);
     ImGui::Begin("Child2", nullptr, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoTitleBar);
-    ImGui::Text("This is the second child window.");
+
+    ImGui::Text("Hash:");
+	ImGui::TextWrapped(hashResult.c_str());
+
     ImGui::End();
 }
 

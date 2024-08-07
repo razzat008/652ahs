@@ -133,6 +133,10 @@ void runMainWindow(bool* dark_mode)
 	dropWindow();
 	ImGui::EndChild();
 
+	ImGui::Text("\n");
+	ShowDropdownMenu();
+	ImGui::Text("\n");
+
     if (ImGui::Button("Hash")) {
         SHA256 sha256;
         sha256.update(std::string(inputText));
@@ -193,6 +197,26 @@ void dropWindow() {
     
 }
 
+const char* items[] = { "Item 1", "Item 2", "Item 3", "Item 4" };
+static int item_current_idx = 0; // Here we store our current item selection index
+
+void ShowDropdownMenu()
+{
+	if (ImGui::BeginCombo("Dropdown", items[item_current_idx]))
+    {
+        for (int n = 0; n < IM_ARRAYSIZE(items); n++)
+        {
+            const bool is_selected = (item_current_idx == n);
+            if (ImGui::Selectable(items[n], is_selected))
+                item_current_idx = n; // Update the selected item index
+
+            // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+            if (is_selected)
+                ImGui::SetItemDefaultFocus();
+        }
+        ImGui::EndCombo();
+    }
+}
 void ToggleButton(const char* str_id, bool* v)
 {
     ImVec2 p = ImGui::GetCursorScreenPos();

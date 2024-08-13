@@ -76,3 +76,8 @@ _Below is the rough demonstration of the filetree of the project_
 │       └── ...
 └── ...
 ```
+
+## Checkout
+
+- [boot.dev](https://blog.boot.dev/cryptography/how-sha-2-works-step-by-step-sha-256/) to learn more on how the algorithm works
+- [this too](https://gist.github.com/hak8or/8794351) 

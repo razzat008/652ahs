@@ -48,6 +48,7 @@ void runGUI() {
     bool dark_mode = false; //set dark mode as false by default during development for ease of design
 	bool file_hash_state = false;
 
+	ImVec4 clear_color(1.0f, 1.0f, 1.0f, 1.00f);
     // Main loop
     while (!glfwWindowShouldClose(window)) {
         // Poll and handle events
@@ -67,12 +68,19 @@ void runGUI() {
 
         runMainWindow(&dark_mode, &file_hash_state);
 
+		if(dark_mode){
+			clear_color = ImVec4(0.0f, 0.0f, 0.0f, 1.0f);
+		}
+		else{
+			clear_color = ImVec4(1.0f, 1.0f, 1.0f, 1.00f);
+		}
+
         // Rendering
         ImGui::Render();
         int display_w, display_h;
         glfwGetFramebufferSize(window, &display_w, &display_h);
         glViewport(0, 0, display_w, display_h);
-        glClearColor(1.0f, 1.0f, 1.0f, 1.00f);
+        glClearColor(clear_color.x, clear_color.y, clear_color.z, clear_color.w);
         glClear(GL_COLOR_BUFFER_BIT);
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 

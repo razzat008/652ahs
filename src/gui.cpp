@@ -48,8 +48,8 @@ void runGUI() {
   }
 
   // defining states
-  bool dark_mode = true; // set dark mode as false by default during
-                         // development for ease of design
+  bool dark_mode = false; // set dark mode as false by default during
+                          // development for ease of design
   bool file_hash_state = false;
 
   ImVec4 clear_color(1.0f, 1.0f, 1.0f, 1.00f);
@@ -162,8 +162,9 @@ void runMainWindow(bool *dark_mode, bool *file_hash_state) {
   ToggleButton(" some text ", dark_mode);
   ImGui::Text("Do you want to hash file?");
   ToggleFile(" new text ", file_hash_state);
-  static char inputText[256] = "";
+  static char inputText[256]{0};
   static std::string hashResult;
+  double file_size;
 
   if (*file_hash_state) {
 
@@ -179,8 +180,11 @@ void runMainWindow(bool *dark_mode, bool *file_hash_state) {
 
   if (ImGui::Button("Hash")) {
     SHA256 sha256;
-    if (file_hash_state) {
+
+    if (*file_hash_state) {
+
       std::filesystem::path filePath = droppedFiles.front().c_str();
+      file_size = std::filesystem::file_size(filePath);
       std::stringstream buffer;
       std::ifstream inputFile(filePath, std::ios::binary);
       buffer << inputFile.rdbuf();
@@ -188,16 +192,27 @@ void runMainWindow(bool *dark_mode, bool *file_hash_state) {
 
       inputFile.close();
       sha256.update(contents);
+
     } else {
-      sha256.update(std::string(inputText));
+      sha256.update(inputText);
     }
+
     hashResult = sha256.digest();
     time_t now = time(0);
     std::string dt = ctime(&now);
     dt.pop_back(); // remove newline character
     // Insert into database
-    if (!db.insertData(inputText, hashResult, dt)) {
-      std::cerr << "Failed to insert data into database" << std::endl;
+    if (*file_hash_state) {
+      if (!db.insertData(inputText, hashResult, dt, droppedFiles.front(),
+                         file_size)) {
+        std::cerr << "Failed to insert data into database for files."
+                  << std::endl;
+      }
+    } else {
+      if (!db.insertData(inputText, hashResult, dt)) {
+        std::cerr << "Failed to insert data into database for text"
+                  << std::endl;
+      }
     }
   }
 

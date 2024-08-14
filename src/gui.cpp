@@ -102,6 +102,12 @@ void runGUI() {
 
 std::vector<std::filesystem::path> droppedFiles;
 
+// to get the actual name of the file instead of it's absolute path
+inline std::string filename() {
+  std::string filepath = droppedFiles.front();
+  return filepath.substr(filepath.find_last_of('/') + 1);
+}
+
 void drop_callback(GLFWwindow *window, int count, const char **paths) {
   droppedFiles.clear();
   for (int i = 0; i < count; ++i) {
@@ -203,7 +209,7 @@ void runMainWindow(bool *dark_mode, bool *file_hash_state) {
     dt.pop_back(); // remove newline character
     // Insert into database
     if (*file_hash_state) {
-      if (!db.insertData(inputText, hashResult, dt, droppedFiles.front(),
+      if (!db.insertData(inputText, hashResult, dt, filename(),
                          file_size)) {
         std::cerr << "Failed to insert data into database for files."
                   << std::endl;

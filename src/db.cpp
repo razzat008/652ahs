@@ -32,9 +32,8 @@ bool Database::init() {
 
 bool Database::insertData(const std::string &text, const std::string &hash,
                           const std::string &timestamp,
-                          const std::string &file_name, const double file_size) {
-  // const char *sql = "INSERT INTO Hashes (Text, Hash, Timestamp) "
-  //                   " VALUES (?, ?, ? );";
+                          const std::string &file_name,
+                          const double file_size) {
 
   const char *sql = "INSERT INTO Hashes (Text, Hash, Timestamp, Filename, "
                     "Filesize) VALUES (?, ?, ?, ?, ?);";

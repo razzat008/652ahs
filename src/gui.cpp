@@ -46,6 +46,7 @@ void runGUI() {
 
     //defining states
     bool dark_mode = false; //set dark mode as false by default during development for ease of design
+	bool file_hash_state = false;
 
     // Main loop
     while (!glfwWindowShouldClose(window)) {
@@ -64,7 +65,7 @@ void runGUI() {
         //setup tje color theme
         SetupImGuiStyle(&dark_mode);
 
-        runMainWindow(&dark_mode);
+        runMainWindow(&dark_mode, &file_hash_state);
 
         // Rendering
         ImGui::Render();
@@ -87,7 +88,7 @@ void runGUI() {
     glfwTerminate();
 }
 
-void runMainWindow(bool* dark_mode)
+void runMainWindow(bool* dark_mode, bool* file_hash_state)
 {
     // Initialize database
     Database db("hashes.db");
@@ -121,17 +122,23 @@ void runMainWindow(bool* dark_mode)
 
     ImGui::Text("Dark Mode:");
     ToggleButton(" some text ", dark_mode);
+	ImGui::Text("Do you want to hash file?");
+	ToggleFile(" new text ", file_hash_state);
+	static char inputText[256] = "";
+	static std::string hashResult;
+	
+	if(*file_hash_state){
+		
+		//drag and drop window
+		ImGui::BeginChild("Drag and Drop", ImVec2(600, 100), true);
+		dropWindow();
+		ImGui::EndChild();
 
-    static char inputText[256] = "";
-    static std::string hashResult;
-
-    ImGui::Text("Text to hash:");
-    ImGui::InputText("##TextToHash", inputText, IM_ARRAYSIZE(inputText));
-
-	//drag and drop window
-	ImGui::BeginChild("Drag and Drop", ImVec2(600, 100), true);
-	dropWindow();
-	ImGui::EndChild();
+	}
+    else{
+		ImGui::Text("Text to hash:");
+		ImGui::InputText("##TextToHash", inputText, IM_ARRAYSIZE(inputText));
+	}
 
 	ImGui::Text("\n");
 	ShowDropdownMenu();
@@ -217,6 +224,41 @@ void ShowDropdownMenu()
         ImGui::EndCombo();
     }
 }
+
+void ToggleFile(const char* str_id, bool* f)
+{
+    ImVec2 p = ImGui::GetCursorScreenPos();
+    ImDrawList* draw_list = ImGui::GetWindowDrawList();
+
+    float height = ImGui::GetFrameHeight();
+    float width = height * 1.55f;
+    float radius = height * 0.50f;
+
+    ImGui::InvisibleButton(str_id, ImVec2(width, height));
+    if (ImGui::IsItemClicked())
+        *f = !*f;
+
+    float t = *f ? 1.0f : 0.0f;
+
+    ImGuiContext& g = *GImGui;
+    float ANIM_SPEED = 0.08f;
+    if (g.LastActiveId == g.CurrentWindow->GetID(str_id) && g.LastActiveIdTimer < ANIM_SPEED)
+    {
+        float t_anim = ImSaturate(g.LastActiveIdTimer / ANIM_SPEED);
+        t = *f ? (t_anim) : (1.0f - t_anim);
+    }
+
+    ImU32 col_bg;
+    if (ImGui::IsItemHovered())
+        col_bg = ImGui::GetColorU32(ImLerp(ImVec4(0.78f, 0.78f, 0.78f, 1.0f), ImVec4(0.64f, 0.83f, 0.34f, 1.0f), t));
+    else
+        col_bg = ImGui::GetColorU32(ImLerp(ImVec4(0.85f, 0.85f, 0.85f, 1.0f), ImVec4(0.56f, 0.83f, 0.26f, 1.0f), t));
+
+    draw_list->AddRectFilled(p, ImVec2(p.x + width, p.y + height), col_bg, height * 0.5f);
+    draw_list->AddCircleFilled(ImVec2(p.x + radius + t * (width - radius * 2.0f), p.y + radius), radius - 1.5f, IM_COL32(255, 255, 255, 255));
+}
+
+
 void ToggleButton(const char* str_id, bool* v)
 {
     ImVec2 p = ImGui::GetCursorScreenPos();

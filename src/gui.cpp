@@ -1,7 +1,9 @@
 #include "gui.h"
 #include "../libs/config.h"
 #include "db.h"
+#include "imgui.h"
 #include "sha.h"
+#include <filesystem>
 
 void drop_callback(GLFWwindow *window, int count, const char **paths);
 
@@ -50,14 +52,12 @@ void runGUI() {
                          // development for ease of design
   bool file_hash_state = false;
 
+  ImVec4 clear_color(1.0f, 1.0f, 1.0f, 1.00f);
 
-	ImVec4 clear_color(1.0f, 1.0f, 1.0f, 1.00f);
-   
   // Main loop
   while (!glfwWindowShouldClose(window)) {
     // Poll and handle events
     glfwPollEvents();
-
 
     // Start the Dear ImGui frame
     ImGui_ImplOpenGL3_NewFrame();
@@ -73,22 +73,20 @@ void runGUI() {
 
     runMainWindow(&dark_mode, &file_hash_state);
 
+    if (dark_mode) {
+      clear_color = ImVec4(0.0f, 0.0f, 0.0f, 1.0f);
+    } else {
+      clear_color = ImVec4(1.0f, 1.0f, 1.0f, 1.00f);
+    }
 
-		if(dark_mode){
-			clear_color = ImVec4(0.0f, 0.0f, 0.0f, 1.0f);
-		}
-		else{
-			clear_color = ImVec4(1.0f, 1.0f, 1.0f, 1.00f);
-		}
-
-        // Rendering
-        ImGui::Render();
-        int display_w, display_h;
-        glfwGetFramebufferSize(window, &display_w, &display_h);
-        glViewport(0, 0, display_w, display_h);
-        glClearColor(clear_color.x, clear_color.y, clear_color.z, clear_color.w);
-        glClear(GL_COLOR_BUFFER_BIT);
-        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+    // Rendering
+    ImGui::Render();
+    int display_w, display_h;
+    glfwGetFramebufferSize(window, &display_w, &display_h);
+    glViewport(0, 0, display_w, display_h);
+    glClearColor(clear_color.x, clear_color.y, clear_color.z, clear_color.w);
+    glClear(GL_COLOR_BUFFER_BIT);
+    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
     glfwSwapBuffers(window);
   }
@@ -100,6 +98,27 @@ void runGUI() {
 
   glfwDestroyWindow(window);
   glfwTerminate();
+}
+
+std::vector<std::filesystem::path> droppedFiles;
+
+void drop_callback(GLFWwindow *window, int count, const char **paths) {
+  droppedFiles.clear();
+  for (int i = 0; i < count; ++i) {
+    droppedFiles.push_back(std::string(paths[i]));
+  }
+}
+
+void dropWindow() {
+
+  if (!droppedFiles.empty()) {
+    ImGui::Text("Dropped files:");
+    for (const auto &file : droppedFiles) {
+      ImGui::Text("%s", file.c_str());
+    }
+  } else {
+    ImGui::Text("Drag and drop files here.");
+  }
 }
 
 void runMainWindow(bool *dark_mode, bool *file_hash_state) {
@@ -160,12 +179,23 @@ void runMainWindow(bool *dark_mode, bool *file_hash_state) {
 
   if (ImGui::Button("Hash")) {
     SHA256 sha256;
-    sha256.update(std::string(inputText));
+    if (file_hash_state) {
+      std::filesystem::path filePath = droppedFiles.front().c_str();
+      std::stringstream buffer;
+      std::ifstream inputFile(filePath, std::ios::binary);
+      buffer << inputFile.rdbuf();
+      std::string contents = buffer.str();
+
+      inputFile.close();
+      sha256.update(contents);
+    } else {
+      sha256.update(std::string(inputText));
+    }
     hashResult = sha256.digest();
-    // Insert into database
     time_t now = time(0);
     std::string dt = ctime(&now);
     dt.pop_back(); // remove newline character
+    // Insert into database
     if (!db.insertData(inputText, hashResult, dt)) {
       std::cerr << "Failed to insert data into database" << std::endl;
     }
@@ -195,33 +225,12 @@ void runMainWindow(bool *dark_mode, bool *file_hash_state) {
   ImGui::End();
 }
 
-std::vector<std::string> droppedFiles;
-
-void drop_callback(GLFWwindow *window, int count, const char **paths) {
-  droppedFiles.clear();
-  for (int i = 0; i < count; ++i) {
-    droppedFiles.push_back(std::string(paths[i]));
-  }
-}
-
-void dropWindow() {
-
-  if (!droppedFiles.empty()) {
-    ImGui::Text("Dropped files:");
-    for (const auto &file : droppedFiles) {
-      ImGui::Text("%s", file.c_str());
-    }
-  } else {
-    ImGui::Text("Drag and drop files here.");
-  }
-}
-
 const char *items[] = {"SHA-256", "MD5"};
 static int item_current_idx =
     0; // Here we store our current item selection index
 
 void ShowDropdownMenu() {
-  if (ImGui::BeginCombo("Choose and algorithm", items[item_current_idx])) {
+  if (ImGui::BeginCombo("Choose an algorithm", items[item_current_idx])) {
     for (int n = 0; n < IM_ARRAYSIZE(items); n++) {
       const bool is_selected = (item_current_idx == n);
       if (ImGui::Selectable(items[n], is_selected))
@@ -236,6 +245,7 @@ void ShowDropdownMenu() {
   }
 }
 
+// file mode toggle
 void ToggleFile(const char *str_id, bool *f) {
   ImVec2 p = ImGui::GetCursorScreenPos();
   ImDrawList *draw_list = ImGui::GetWindowDrawList();

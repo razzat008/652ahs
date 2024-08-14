@@ -2,6 +2,7 @@
 #define DB_H
 
 #include "../libs/config.h"
+#include <cstdlib>
 
 class Database {
 public:
@@ -12,6 +13,8 @@ public:
                   const std::string &timestamp,
                   const std::string &file_name = "none",
                   const double file_size = 0);
+  bool getEntry(const std::string &field, std::string &result);
+  bool getEntry(const std::string &field, double &result);
 
 private:
   sqlite3 *db;

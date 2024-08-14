@@ -209,8 +209,7 @@ void runMainWindow(bool *dark_mode, bool *file_hash_state) {
     dt.pop_back(); // remove newline character
     // Insert into database
     if (*file_hash_state) {
-      if (!db.insertData(inputText, hashResult, dt, filename(),
-                         file_size)) {
+      if (!db.insertData(filename(), hashResult, dt, filename(), file_size)) {
         std::cerr << "Failed to insert data into database for files."
                   << std::endl;
       }
@@ -237,11 +236,21 @@ void runMainWindow(bool *dark_mode, bool *file_hash_state) {
   ImGui::TextWrapped("%s", hashResult.c_str());
   ImGui::EndChild();
 
-  // link with the backend and edit or add as per necessary
   ImGui::Text("\n\nDetails of Operation:\n\n");
-  ImGui::Text("Input : \n\n");
-  ImGui::Text("Text/File Size: \n\n");
-  ImGui::Text("Date:\n\n");
+  std::string filename;
+  std::string text;
+  std::string date;
+  double filesize(0);
+  // retrieving data
+  db.getEntry("Filename", filename);
+  db.getEntry("Timestamp", date);
+  db.getEntry("Text", text);
+  db.getEntry("Filesize", filesize);
+  // db.getEntry("Filesize",filesize);
+  ImGui::Text("Input : %s", text.c_str());
+  ImGui::Text("\n\n");
+  ImGui::Text("Text/File Size:%lf \n\n", filesize);
+  ImGui::Text("Date:%s\n\n", date.c_str());
 
   ImGui::End();
 }

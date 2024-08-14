@@ -1,5 +1,6 @@
 #include "db.h"
 #include <iostream>
+#include <string>
 
 Database::Database(const std::string &dbName) : db(nullptr), dbName(dbName) {}
 
@@ -55,5 +56,101 @@ bool Database::insertData(const std::string &text, const std::string &hash,
     return false;
   }
   sqlite3_finalize(stmt);
+  return true;
+}
+
+// bool Database::getEntry(const std::string &query) {
+//   const char *sql =
+//       "SELECT ? FROM Hashes;";
+//   sqlite3_stmt *stmt;
+//   if (sqlite3_prepare_v2(db, sql, -1, &stmt, nullptr) != SQLITE_OK) {
+//     std::cerr << "Failed to prepare statement: " << sqlite3_errmsg(db)
+//               << std::endl;
+//     return false;
+//   }
+//
+//   sqlite3_bind_text(stmt,1,sql,-1,SQLITE_STATIC);
+//
+//   if (sqlite3_step(stmt) == SQLITE_ROW) {
+//     filename = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 0));
+//     filesize = sqlite3_column_double(stmt, 1);
+//     timestamp = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 2));
+//     hash = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 3));
+//   } else {
+//     std::cerr << "Failed to retrieve entry: " << sqlite3_errmsg(db)
+//               << std::endl;
+//     sqlite3_finalize(stmt);
+//     return false;
+//   }
+//
+//   sqlite3_finalize(stmt);
+//   return true;
+// }
+bool Database::getEntry(const std::string &field, std::string &result) {
+  // Construct SQL query to get the latest entry based on the highest ID
+  std::string sql =
+      "SELECT " + field + " FROM Hashes ORDER BY ID DESC LIMIT 1;";
+
+  sqlite3_stmt *stmt;
+  if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, nullptr) != SQLITE_OK) {
+    std::cerr << "Failed to prepare statement: " << sqlite3_errmsg(db)
+              << std::endl;
+    return false;
+  }
+
+  if (sqlite3_step(stmt) == SQLITE_ROW) {
+    result = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 0));
+
+  } else {
+    std::cerr << "Failed to retrieve entry: " << sqlite3_errmsg(db)
+              << std::endl;
+    sqlite3_finalize(stmt);
+    return false;
+  }
+
+  sqlite3_finalize(stmt);
+  return true;
+}
+bool Database::getEntry(const std::string &field, double &result) {
+  std::string sql =
+
+      "SELECT " + field + " FROM Hashes ORDER BY ID DESC LIMIT 1;";
+
+  sqlite3_stmt *stmt;
+
+  if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, nullptr) != SQLITE_OK) {
+
+    std::cerr << "Failed to prepare statement: " << sqlite3_errmsg(db)
+
+              << std::endl;
+
+    return false;
+  }
+
+  int rc = sqlite3_step(stmt);
+
+  if (rc == SQLITE_ROW) {
+
+    result = sqlite3_column_double(stmt, 0);
+
+  } else if (rc == SQLITE_DONE) {
+
+    std::cerr << "No entries in the table" << std::endl;
+
+    result = 0.0; // or set to some default value
+
+  } else {
+
+    std::cerr << "Failed to retrieve entry: " << sqlite3_errmsg(db)
+
+              << std::endl;
+
+    sqlite3_finalize(stmt);
+
+    return false;
+  }
+
+  sqlite3_finalize(stmt);
+
   return true;
 }

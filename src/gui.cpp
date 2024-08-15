@@ -3,6 +3,7 @@
 #include "db.h"
 #include "imgui.h"
 #include "sha.h"
+#include "md5.h"
 #include <filesystem>
 
 void drop_callback(GLFWwindow *window, int count, const char **paths);
@@ -50,6 +51,7 @@ void runGUI() {
   // defining states
   bool dark_mode = false; // set dark mode as false by default during development for ease of design
   bool file_hash_state = false;
+  bool is_sha_selected = true;
 
   ImVec4 clear_color(1.0f, 1.0f, 1.0f, 1.00f);
 
@@ -70,7 +72,7 @@ void runGUI() {
     // setup tje color theme
     SetupImGuiStyle(&dark_mode);
 
-    runMainWindow(&dark_mode, &file_hash_state);
+    runMainWindow(&dark_mode, &file_hash_state, &is_sha_selected);
 
     if (dark_mode) {
       clear_color = ImVec4(0.0f, 0.0f, 0.0f, 1.0f);
@@ -126,7 +128,7 @@ void dropWindow() {
   }
 }
 
-void runMainWindow(bool *dark_mode, bool *file_hash_state) {
+void runMainWindow(bool *dark_mode, bool *file_hash_state, bool *is_sha_selected) {
   // Initialize database
   Database db("hashes.db");
   if (!db.init()) {
@@ -166,7 +168,7 @@ void runMainWindow(bool *dark_mode, bool *file_hash_state) {
   ToggleButton(" some text ", dark_mode);
 
   ImGui::Text("\n");
-  ShowDropdownMenu();
+  ShowDropdownMenu(is_sha_selected);
   
   ImGui::Spacing();
   ImGui::Text("Do you want to hash file?");
@@ -191,6 +193,7 @@ void runMainWindow(bool *dark_mode, bool *file_hash_state) {
     ImGui::Spacing();
   if (ImGui::Button("Hash")) {
     SHA256 sha256;
+    MD5 md5;
 
     if (*file_hash_state) {
 
@@ -203,26 +206,36 @@ void runMainWindow(bool *dark_mode, bool *file_hash_state) {
       bufferPortion = contents.substr(0, 8);
 
       inputFile.close();
-      sha256.update(contents);
+      
+      if (*is_sha_selected) {
+        sha256.update(contents);
+      } else {
+        md5.update(contents);
+      }
 
     } else {
-      sha256.update(inputText);
+      
+      if (*is_sha_selected){
+        sha256.update(inputText);
+      } else {
+        md5.update(inputText);
+      }
+
     }
 
-    hashResult = sha256.digest();
+    hashResult = (*is_sha_selected) ? sha256.digest() : md5.hexdigest();
     time_t now = time(0);
     std::string dt = ctime(&now);
     dt.pop_back(); // remove newline character
     // Insert into database
     if (*file_hash_state) {
-      if (!db.insertData(bufferPortion, hashResult, dt, file_size,
-                         filename())) {
+      if (!db.insertData(bufferPortion, hashResult, dt, filename(), file_size)) {
         std::cerr << "Failed to insert data into database for files."
                   << std::endl;
       }
     } else {
-      if (!db.insertData(inputText, hashResult, dt,
-                         sizeof(inputText) / sizeof(char))) {
+      std::string inputTextSizeStr = std::to_string(sizeof(inputText) / sizeof(char));
+      if (!db.insertData(inputText, hashResult, dt, inputTextSizeStr, 0)) {
         std::cerr << "Failed to insert data into database for text"
                   << std::endl;
       }
@@ -276,7 +289,7 @@ const char *items[] = {"SHA-256", "MD5"};
 static int item_current_idx =
     0; // Here we store our current item selection index
 
-void ShowDropdownMenu() {
+void ShowDropdownMenu(bool *is_sha_selected) {
   if (ImGui::BeginCombo("Choose an algorithm", items[item_current_idx])) {
     for (int n = 0; n < IM_ARRAYSIZE(items); n++) {
       const bool is_selected = (item_current_idx == n);
@@ -287,6 +300,13 @@ void ShowDropdownMenu() {
       // navigation focus)
       if (is_selected)
         ImGui::SetItemDefaultFocus();
+
+      if (item_current_idx == 0) {
+        *is_sha_selected = true;
+      } else {
+        *is_sha_selected = false;
+      }
+
     }
     ImGui::EndCombo();
   }

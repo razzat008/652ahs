@@ -375,7 +375,7 @@ void SetupImGuiStyle(bool *dark_mode) {
     style.Alpha = 1.0f;
     style.DisabledAlpha = 0.6000000238418579f;
     style.WindowPadding = ImVec2(16.0f, 16.0f);
-    style.WindowRounding = 0.0f;
+    style.WindowRounding = 5.0f;
     style.WindowBorderSize = 0.0f;
     style.WindowMinSize = ImVec2(32.0f, 32.0f);
     style.WindowTitleAlign = ImVec2(0.0f, 0.5f);
@@ -407,7 +407,7 @@ void SetupImGuiStyle(bool *dark_mode) {
     style.Colors[ImGuiCol_TextDisabled] = ImVec4(
         0.4980392158031464f, 0.4980392158031464f, 0.4980392158031464f, 1.0f);
     style.Colors[ImGuiCol_WindowBg] = ImVec4(
-        0.1f, 0.1f, 0.1f, 1.0f);
+        0.082f, 0.082f, 0.082f, 1.0f);
     style.Colors[ImGuiCol_ChildBg] = ImVec4(
         0.25f, 0.25f, 0.25f, 1.0f);
     style.Colors[ImGuiCol_PopupBg] =

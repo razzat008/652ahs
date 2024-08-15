@@ -48,8 +48,7 @@ void runGUI() {
   }
 
   // defining states
-  bool dark_mode = false; // set dark mode as false by default during
-                          // development for ease of design
+  bool dark_mode = false; // set dark mode as false by default during development for ease of design
   bool file_hash_state = false;
 
   ImVec4 clear_color(1.0f, 1.0f, 1.0f, 1.00f);
@@ -360,7 +359,7 @@ void SetupImGuiStyle(bool *dark_mode) {
   if (*dark_mode) {
     style.Alpha = 1.0f;
     style.DisabledAlpha = 0.6000000238418579f;
-    style.WindowPadding = ImVec2(8.0f, 8.0f);
+    style.WindowPadding = ImVec2(15.0f, 15.0f);
     style.WindowRounding = 0.0f;
     style.WindowBorderSize = 0.0f;
     style.WindowMinSize = ImVec2(32.0f, 32.0f);
@@ -393,9 +392,9 @@ void SetupImGuiStyle(bool *dark_mode) {
     style.Colors[ImGuiCol_TextDisabled] = ImVec4(
         0.4980392158031464f, 0.4980392158031464f, 0.4980392158031464f, 1.0f);
     style.Colors[ImGuiCol_WindowBg] = ImVec4(
-        0.03921568766236305f, 0.03921568766236305f, 0.03921568766236305f, 1.0f);
+        0.1f, 0.1f, 0.1f, 1.0f);
     style.Colors[ImGuiCol_ChildBg] = ImVec4(
-        0.05490196123719215f, 0.05490196123719215f, 0.05490196123719215f, 1.0f);
+        0.25f, 0.25f, 0.25f, 1.0f);
     style.Colors[ImGuiCol_PopupBg] =
         ImVec4(0.0784313753247261f, 0.0784313753247261f, 0.0784313753247261f,
                0.8583691120147705f);
@@ -403,7 +402,7 @@ void SetupImGuiStyle(bool *dark_mode) {
     style.Colors[ImGuiCol_BorderShadow] =
         ImVec4(0.0f, 0.0f, 0.0f, 0.6995707750320435f);
     style.Colors[ImGuiCol_FrameBg] = ImVec4(
-        0.05490196123719215f, 0.05490196123719215f, 0.05490196123719215f, 1.0f);
+        0.25f, 0.25f, 0.25f, 1.0f);
     style.Colors[ImGuiCol_FrameBgHovered] = ImVec4(
         0.06666667014360428f, 0.06666667014360428f, 0.06666667014360428f, 1.0f);
     style.Colors[ImGuiCol_FrameBgActive] =
@@ -432,7 +431,7 @@ void SetupImGuiStyle(bool *dark_mode) {
     style.Colors[ImGuiCol_SliderGrab] = ImVec4(1.0f, 1.0f, 1.0f, 1.0f);
     style.Colors[ImGuiCol_SliderGrabActive] = ImVec4(1.0f, 1.0f, 1.0f, 1.0f);
     style.Colors[ImGuiCol_Button] = ImVec4(
-        0.05490196123719215f, 0.05490196123719215f, 0.05490196123719215f, 1.0f);
+        0.25f, 0.25f, 0.25f, 1.0f);
     style.Colors[ImGuiCol_ButtonHovered] = ImVec4(
         0.06666667014360428f, 0.06666667014360428f, 0.06666667014360428f, 1.0f);
     style.Colors[ImGuiCol_ButtonActive] = ImVec4(
@@ -507,7 +506,7 @@ void SetupImGuiStyle(bool *dark_mode) {
   } else {
     style.Alpha = 1.0f;
     style.DisabledAlpha = 0.6000000238418579f;
-    style.WindowPadding = ImVec2(8.0f, 8.0f);
+    style.WindowPadding = ImVec2(15.0f, 15.0f);
     style.WindowRounding = 0.0f;
     style.WindowBorderSize = 0.0f;
     style.WindowMinSize = ImVec2(32.0f, 32.0f);

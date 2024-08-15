@@ -171,6 +171,7 @@ void runMainWindow(bool *dark_mode, bool *file_hash_state) {
   static char inputText[256]{0};
   static std::string hashResult;
   double file_size;
+  static std::string bufferPortion;
 
   if (*file_hash_state) {
 
@@ -195,6 +196,7 @@ void runMainWindow(bool *dark_mode, bool *file_hash_state) {
       std::ifstream inputFile(filePath, std::ios::binary);
       buffer << inputFile.rdbuf();
       std::string contents = buffer.str();
+      bufferPortion = contents.substr(0, 8);
 
       inputFile.close();
       sha256.update(contents);
@@ -209,12 +211,14 @@ void runMainWindow(bool *dark_mode, bool *file_hash_state) {
     dt.pop_back(); // remove newline character
     // Insert into database
     if (*file_hash_state) {
-      if (!db.insertData(filename(), hashResult, dt, filename(), file_size)) {
+      if (!db.insertData(bufferPortion, hashResult, dt, file_size,
+                         filename())) {
         std::cerr << "Failed to insert data into database for files."
                   << std::endl;
       }
     } else {
-      if (!db.insertData(inputText, hashResult, dt)) {
+      if (!db.insertData(inputText, hashResult, dt,
+                         sizeof(inputText) / sizeof(char))) {
         std::cerr << "Failed to insert data into database for text"
                   << std::endl;
       }
@@ -247,9 +251,8 @@ void runMainWindow(bool *dark_mode, bool *file_hash_state) {
   db.getEntry("Text", text);
   db.getEntry("Filesize", filesize);
   // db.getEntry("Filesize",filesize);
-  ImGui::Text("Input : %s", text.c_str());
-  ImGui::Text("\n\n");
-  ImGui::Text("Text/File Size:%lf \n\n", filesize);
+  ImGui::Text("Input : %s\n\n", text.c_str());
+  ImGui::Text("Text/File Size:%lf\n\n", filesize);
   ImGui::Text("Date:%s\n\n", date.c_str());
 
   ImGui::End();

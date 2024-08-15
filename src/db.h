@@ -2,7 +2,6 @@
 #define DB_H
 
 #include "../libs/config.h"
-#include <cstdlib>
 
 class Database {
 public:

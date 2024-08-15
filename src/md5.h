@@ -1,7 +1,7 @@
 #ifndef MD5_H
 #define MD5_H
+#include "../libs/config.h"
 
-#include <string>
 
 class MD5 {
 public:

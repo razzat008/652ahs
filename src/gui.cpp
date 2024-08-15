@@ -362,7 +362,7 @@ void SetupImGuiStyle(bool *dark_mode) {
     style.DisabledAlpha = 0.6000000238418579f;
     style.WindowPadding = ImVec2(8.0f, 8.0f);
     style.WindowRounding = 0.0f;
-    style.WindowBorderSize = 1.0f;
+    style.WindowBorderSize = 0.0f;
     style.WindowMinSize = ImVec2(32.0f, 32.0f);
     style.WindowTitleAlign = ImVec2(0.0f, 0.5f);
     style.WindowMenuButtonPosition = ImGuiDir_Left;
@@ -509,7 +509,7 @@ void SetupImGuiStyle(bool *dark_mode) {
     style.DisabledAlpha = 0.6000000238418579f;
     style.WindowPadding = ImVec2(8.0f, 8.0f);
     style.WindowRounding = 0.0f;
-    style.WindowBorderSize = 1.0f;
+    style.WindowBorderSize = 0.0f;
     style.WindowMinSize = ImVec2(32.0f, 32.0f);
     style.WindowTitleAlign = ImVec2(0.0f, 0.5f);
     style.WindowMenuButtonPosition = ImGuiDir_Left;

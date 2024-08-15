@@ -35,7 +35,7 @@ void runGUI() {
   // ImFont* font = io.Fonts->AddFontDefault();
   // io.Fonts->AddFontFromFileTTF("../assets/fonts/Roboto.ttf", 20.0f);
   io.Fonts->AddFontFromFileTTF("../assets/fonts/JetBrainsMono-Regular.ttf",
-                               20.0f);
+                               20.5f);
   // Setup Platform/Renderer bindings
   ImGui_ImplGlfw_InitForOpenGL(window, true);
   ImGui_ImplOpenGL3_Init("#version 130");
@@ -48,8 +48,7 @@ void runGUI() {
   }
 
   // defining states
-  bool dark_mode = false; // set dark mode as false by default during
-                          // development for ease of design
+  bool dark_mode = false; // set dark mode as false by default during development for ease of design
   bool file_hash_state = false;
 
   ImVec4 clear_color(1.0f, 1.0f, 1.0f, 1.00f);
@@ -160,12 +159,16 @@ void runMainWindow(bool *dark_mode, bool *file_hash_state) {
   ImGui::Begin("Child1", nullptr,
                ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize |
                    ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoTitleBar);
-  ImGui::Text("\n");
-  ShowDropdownMenu();
-  ImGui::Text("\n");
+
 
   ImGui::Text("Dark Mode:");
+  ImGui::SameLine();
   ToggleButton(" some text ", dark_mode);
+
+  ImGui::Text("\n");
+  ShowDropdownMenu();
+  
+  ImGui::Spacing();
   ImGui::Text("Do you want to hash file?");
   ToggleFile(" new text ", file_hash_state);
   static char inputText[256]{0};
@@ -185,6 +188,7 @@ void runMainWindow(bool *dark_mode, bool *file_hash_state) {
     ImGui::InputText("##TextToHash", inputText, IM_ARRAYSIZE(inputText));
   }
 
+    ImGui::Spacing();
   if (ImGui::Button("Hash")) {
     SHA256 sha256;
 
@@ -231,16 +235,26 @@ void runMainWindow(bool *dark_mode, bool *file_hash_state) {
   ImGui::SetNextWindowPos(
       ImVec2(child_margin_x * 2 + first_child_size.x, child_margin_y));
   ImGui::SetNextWindowSize(second_child_size);
-  ImGui::Begin("Child2", nullptr,
-               ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize |
-                   ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoTitleBar);
+  ImGui::Begin("Child2", nullptr, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoTitleBar);
 
-  ImGui::BeginChild("Hash Output", ImVec2(690, 150), true);
+
+  ImVec2 parent_size = ImGui::GetWindowSize();
+  // Calculate the uniform margin for the child window
+  const float hash_output_margin_percentage = 0.018f;
+  float x_margin = parent_size.x * hash_output_margin_percentage;
+  // Calculate the size of the "Hash Output" child window
+  ImVec2 hash_output_size(parent_size.x - 2 * x_margin, parent_size.y * 0.21f);
+
+
+  ImGui::SetCursorPosX(x_margin);
+  ImGui::BeginChild("Hash Output", hash_output_size, true);
   ImGui::Text("Hash:");
   ImGui::TextWrapped("%s", hashResult.c_str());
   ImGui::EndChild();
 
+
   ImGui::Text("\n\nDetails of Operation:\n\n");
+  
   std::string filename;
   std::string text;
   std::string date;
@@ -360,9 +374,9 @@ void SetupImGuiStyle(bool *dark_mode) {
   if (*dark_mode) {
     style.Alpha = 1.0f;
     style.DisabledAlpha = 0.6000000238418579f;
-    style.WindowPadding = ImVec2(8.0f, 8.0f);
-    style.WindowRounding = 0.0f;
-    style.WindowBorderSize = 1.0f;
+    style.WindowPadding = ImVec2(16.0f, 16.0f);
+    style.WindowRounding = 5.0f;
+    style.WindowBorderSize = 0.0f;
     style.WindowMinSize = ImVec2(32.0f, 32.0f);
     style.WindowTitleAlign = ImVec2(0.0f, 0.5f);
     style.WindowMenuButtonPosition = ImGuiDir_Left;
@@ -370,11 +384,11 @@ void SetupImGuiStyle(bool *dark_mode) {
     style.ChildBorderSize = 1.0f;
     style.PopupRounding = 0.0f;
     style.PopupBorderSize = 1.0f;
-    style.FramePadding = ImVec2(4.0f, 3.0f);
+    style.FramePadding = ImVec2(4.0f, 4.5f);
     style.FrameRounding = 0.0f;
     style.FrameBorderSize = 0.0f;
-    style.ItemSpacing = ImVec2(8.0f, 4.0f);
-    style.ItemInnerSpacing = ImVec2(4.0f, 4.0f);
+    style.ItemSpacing = ImVec2(8.0f, 10.0f);
+    style.ItemInnerSpacing = ImVec2(8.0f, 8.0f);
     style.CellPadding = ImVec2(4.0f, 2.0f);
     style.IndentSpacing = 21.0f;
     style.ColumnsMinSpacing = 6.0f;
@@ -393,9 +407,9 @@ void SetupImGuiStyle(bool *dark_mode) {
     style.Colors[ImGuiCol_TextDisabled] = ImVec4(
         0.4980392158031464f, 0.4980392158031464f, 0.4980392158031464f, 1.0f);
     style.Colors[ImGuiCol_WindowBg] = ImVec4(
-        0.03921568766236305f, 0.03921568766236305f, 0.03921568766236305f, 1.0f);
+        0.082f, 0.082f, 0.082f, 1.0f);
     style.Colors[ImGuiCol_ChildBg] = ImVec4(
-        0.05490196123719215f, 0.05490196123719215f, 0.05490196123719215f, 1.0f);
+        0.25f, 0.25f, 0.25f, 1.0f);
     style.Colors[ImGuiCol_PopupBg] =
         ImVec4(0.0784313753247261f, 0.0784313753247261f, 0.0784313753247261f,
                0.8583691120147705f);
@@ -403,7 +417,7 @@ void SetupImGuiStyle(bool *dark_mode) {
     style.Colors[ImGuiCol_BorderShadow] =
         ImVec4(0.0f, 0.0f, 0.0f, 0.6995707750320435f);
     style.Colors[ImGuiCol_FrameBg] = ImVec4(
-        0.05490196123719215f, 0.05490196123719215f, 0.05490196123719215f, 1.0f);
+        0.25f, 0.25f, 0.25f, 1.0f);
     style.Colors[ImGuiCol_FrameBgHovered] = ImVec4(
         0.06666667014360428f, 0.06666667014360428f, 0.06666667014360428f, 1.0f);
     style.Colors[ImGuiCol_FrameBgActive] =
@@ -432,7 +446,7 @@ void SetupImGuiStyle(bool *dark_mode) {
     style.Colors[ImGuiCol_SliderGrab] = ImVec4(1.0f, 1.0f, 1.0f, 1.0f);
     style.Colors[ImGuiCol_SliderGrabActive] = ImVec4(1.0f, 1.0f, 1.0f, 1.0f);
     style.Colors[ImGuiCol_Button] = ImVec4(
-        0.05490196123719215f, 0.05490196123719215f, 0.05490196123719215f, 1.0f);
+        0.25f, 0.25f, 0.25f, 1.0f);
     style.Colors[ImGuiCol_ButtonHovered] = ImVec4(
         0.06666667014360428f, 0.06666667014360428f, 0.06666667014360428f, 1.0f);
     style.Colors[ImGuiCol_ButtonActive] = ImVec4(
@@ -507,9 +521,9 @@ void SetupImGuiStyle(bool *dark_mode) {
   } else {
     style.Alpha = 1.0f;
     style.DisabledAlpha = 0.6000000238418579f;
-    style.WindowPadding = ImVec2(8.0f, 8.0f);
+    style.WindowPadding = ImVec2(16.0f, 16.0f);
     style.WindowRounding = 0.0f;
-    style.WindowBorderSize = 1.0f;
+    style.WindowBorderSize = 0.0f;
     style.WindowMinSize = ImVec2(32.0f, 32.0f);
     style.WindowTitleAlign = ImVec2(0.0f, 0.5f);
     style.WindowMenuButtonPosition = ImGuiDir_Left;
@@ -517,11 +531,11 @@ void SetupImGuiStyle(bool *dark_mode) {
     style.ChildBorderSize = 1.0f;
     style.PopupRounding = 0.0f;
     style.PopupBorderSize = 1.0f;
-    style.FramePadding = ImVec2(4.0f, 3.0f);
+    style.FramePadding = ImVec2(4.0f, 4.2f);
     style.FrameRounding = 0.0f;
     style.FrameBorderSize = 0.0f;
-    style.ItemSpacing = ImVec2(8.0f, 4.0f);
-    style.ItemInnerSpacing = ImVec2(4.0f, 4.0f);
+    style.ItemSpacing = ImVec2(8.0f, 7.0f);
+    style.ItemInnerSpacing = ImVec2(8.0f, 8.0f);
     style.CellPadding = ImVec2(4.0f, 2.0f);
     style.IndentSpacing = 21.0f;
     style.ColumnsMinSpacing = 6.0f;

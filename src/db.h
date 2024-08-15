@@ -10,9 +10,8 @@ public:
   ~Database();
   bool init();
   bool insertData(const std::string &text, const std::string &hash,
-                  const std::string &timestamp,
-                  const std::string &file_name = "none",
-                  const double file_size = 0);
+                  const std::string &timestamp, const double file_size = 0,
+                  const std::string &file_name = "none");
   bool getEntry(const std::string &field, std::string &result);
   bool getEntry(const std::string &field, double &result);
 

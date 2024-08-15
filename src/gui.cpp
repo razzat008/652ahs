@@ -159,12 +159,16 @@ void runMainWindow(bool *dark_mode, bool *file_hash_state) {
   ImGui::Begin("Child1", nullptr,
                ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize |
                    ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoTitleBar);
-  ImGui::Text("\n");
-  ShowDropdownMenu();
-  ImGui::Text("\n");
+
 
   ImGui::Text("Dark Mode:");
+  ImGui::SameLine();
   ToggleButton(" some text ", dark_mode);
+
+  ImGui::Text("\n");
+  ShowDropdownMenu();
+  
+  ImGui::Spacing();
   ImGui::Text("Do you want to hash file?");
   ToggleFile(" new text ", file_hash_state);
   static char inputText[256]{0};
@@ -184,6 +188,7 @@ void runMainWindow(bool *dark_mode, bool *file_hash_state) {
     ImGui::InputText("##TextToHash", inputText, IM_ARRAYSIZE(inputText));
   }
 
+    ImGui::Spacing();
   if (ImGui::Button("Hash")) {
     SHA256 sha256;
 
@@ -247,7 +252,9 @@ void runMainWindow(bool *dark_mode, bool *file_hash_state) {
   ImGui::TextWrapped("%s", hashResult.c_str());
   ImGui::EndChild();
 
+
   ImGui::Text("\n\nDetails of Operation:\n\n");
+  
   std::string filename;
   std::string text;
   std::string date;
@@ -377,11 +384,11 @@ void SetupImGuiStyle(bool *dark_mode) {
     style.ChildBorderSize = 1.0f;
     style.PopupRounding = 0.0f;
     style.PopupBorderSize = 1.0f;
-    style.FramePadding = ImVec2(4.0f, 3.0f);
+    style.FramePadding = ImVec2(4.0f, 4.5f);
     style.FrameRounding = 0.0f;
     style.FrameBorderSize = 0.0f;
-    style.ItemSpacing = ImVec2(8.0f, 4.0f);
-    style.ItemInnerSpacing = ImVec2(4.0f, 4.0f);
+    style.ItemSpacing = ImVec2(8.0f, 10.0f);
+    style.ItemInnerSpacing = ImVec2(8.0f, 8.0f);
     style.CellPadding = ImVec2(4.0f, 2.0f);
     style.IndentSpacing = 21.0f;
     style.ColumnsMinSpacing = 6.0f;
@@ -524,11 +531,11 @@ void SetupImGuiStyle(bool *dark_mode) {
     style.ChildBorderSize = 1.0f;
     style.PopupRounding = 0.0f;
     style.PopupBorderSize = 1.0f;
-    style.FramePadding = ImVec2(4.0f, 3.0f);
+    style.FramePadding = ImVec2(4.0f, 4.2f);
     style.FrameRounding = 0.0f;
     style.FrameBorderSize = 0.0f;
-    style.ItemSpacing = ImVec2(8.0f, 4.0f);
-    style.ItemInnerSpacing = ImVec2(4.0f, 4.0f);
+    style.ItemSpacing = ImVec2(8.0f, 7.0f);
+    style.ItemInnerSpacing = ImVec2(8.0f, 8.0f);
     style.CellPadding = ImVec2(4.0f, 2.0f);
     style.IndentSpacing = 21.0f;
     style.ColumnsMinSpacing = 6.0f;

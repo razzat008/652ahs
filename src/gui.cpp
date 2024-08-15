@@ -35,7 +35,7 @@ void runGUI() {
   // ImFont* font = io.Fonts->AddFontDefault();
   // io.Fonts->AddFontFromFileTTF("../assets/fonts/Roboto.ttf", 20.0f);
   io.Fonts->AddFontFromFileTTF("../assets/fonts/JetBrainsMono-Regular.ttf",
-                               20.0f);
+                               20.5f);
   // Setup Platform/Renderer bindings
   ImGui_ImplGlfw_InitForOpenGL(window, true);
   ImGui_ImplOpenGL3_Init("#version 130");
@@ -230,11 +230,19 @@ void runMainWindow(bool *dark_mode, bool *file_hash_state) {
   ImGui::SetNextWindowPos(
       ImVec2(child_margin_x * 2 + first_child_size.x, child_margin_y));
   ImGui::SetNextWindowSize(second_child_size);
-  ImGui::Begin("Child2", nullptr,
-               ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize |
-                   ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoTitleBar);
+  ImGui::Begin("Child2", nullptr, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoTitleBar);
 
-  ImGui::BeginChild("Hash Output", ImVec2(690, 150), true);
+
+  ImVec2 parent_size = ImGui::GetWindowSize();
+  // Calculate the uniform margin for the child window
+  const float hash_output_margin_percentage = 0.018f;
+  float x_margin = parent_size.x * hash_output_margin_percentage;
+  // Calculate the size of the "Hash Output" child window
+  ImVec2 hash_output_size(parent_size.x - 2 * x_margin, parent_size.y * 0.21f);
+
+
+  ImGui::SetCursorPosX(x_margin);
+  ImGui::BeginChild("Hash Output", hash_output_size, true);
   ImGui::Text("Hash:");
   ImGui::TextWrapped("%s", hashResult.c_str());
   ImGui::EndChild();
@@ -359,7 +367,7 @@ void SetupImGuiStyle(bool *dark_mode) {
   if (*dark_mode) {
     style.Alpha = 1.0f;
     style.DisabledAlpha = 0.6000000238418579f;
-    style.WindowPadding = ImVec2(15.0f, 15.0f);
+    style.WindowPadding = ImVec2(16.0f, 16.0f);
     style.WindowRounding = 0.0f;
     style.WindowBorderSize = 0.0f;
     style.WindowMinSize = ImVec2(32.0f, 32.0f);
@@ -506,7 +514,7 @@ void SetupImGuiStyle(bool *dark_mode) {
   } else {
     style.Alpha = 1.0f;
     style.DisabledAlpha = 0.6000000238418579f;
-    style.WindowPadding = ImVec2(15.0f, 15.0f);
+    style.WindowPadding = ImVec2(16.0f, 16.0f);
     style.WindowRounding = 0.0f;
     style.WindowBorderSize = 0.0f;
     style.WindowMinSize = ImVec2(32.0f, 32.0f);

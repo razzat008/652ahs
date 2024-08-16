@@ -266,6 +266,10 @@ void runMainWindow(bool *dark_mode, bool *file_hash_state, bool *is_sha_selected
   ImGui::TextWrapped("%s", hashResult.c_str());
   ImGui::EndChild();
 
+  // Button to copy the generated hash to the clipboard
+  if (ImGui::Button("Copy to Clipboard")) {
+    ImGui::SetClipboardText(hashResult.c_str());
+  }
 
   ImGui::Text("\n\nDetails of Operation:\n\n");
   

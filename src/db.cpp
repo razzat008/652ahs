@@ -82,7 +82,8 @@ bool Database::getEntry(const std::string &field, double &result) {
 }
 
 bool Database::getEntry(const std::string &field, std::string &result) {
-  std::string sql = "SELECT " + field + " FROM Hashes ORDER BY ID DESC LIMIT 1;";
+  std::string sql =
+      "SELECT " + field + " FROM Hashes ORDER BY ID DESC LIMIT 1;";
 
   sqlite3_stmt *stmt;
   if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, nullptr) != SQLITE_OK) {
@@ -92,16 +93,17 @@ bool Database::getEntry(const std::string &field, std::string &result) {
   }
 
   if (sqlite3_step(stmt) == SQLITE_ROW) {
-    const unsigned char *text = sqlite3_column_text(stmt, 0); // as sqlite3_column_text returns const unsigned char
+    const unsigned char *text = sqlite3_column_text(
+        stmt, 0); // as sqlite3_column_text returns const unsigned char
     if (text != nullptr) {
       result = reinterpret_cast<const char *>(text);
     } else {
       result = "";
     }
   } else {
-    std::cerr << "Failed to retrieve entry: " << sqlite3_errmsg(db)
-              << std::endl;
-    sqlite3_finalize(stmt);
+    // std::cerr << "Failed to retrieve entry: " << sqlite3_errmsg(db)
+    //           << std::endl;
+    // sqlite3_finalize(stmt);
     return false;
   }
 

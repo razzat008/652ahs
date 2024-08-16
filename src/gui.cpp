@@ -5,6 +5,7 @@
 #include "sha.h"
 #include "md5.h"
 #include <filesystem>
+#include <string>
 
 void drop_callback(GLFWwindow *window, int count, const char **paths);
 
@@ -234,8 +235,8 @@ void runMainWindow(bool *dark_mode, bool *file_hash_state, bool *is_sha_selected
                   << std::endl;
       }
     } else {
-      std::string inputTextSizeStr = std::to_string(sizeof(inputText) / sizeof(char));
-      if (!db.insertData(inputText, hashResult, dt, inputTextSizeStr, 0)) {
+      int inputTextSizeStr = (sizeof(inputText) / sizeof(char));
+      if (!db.insertData(inputText, hashResult, dt, std::to_string(0), inputTextSizeStr)) {
         std::cerr << "Failed to insert data into database for text"
                   << std::endl;
       }

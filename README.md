@@ -2,7 +2,17 @@
 
 This is an end-semester project done in 1st year 2nd semester at Kathmandu University. It generates hash of input text or file with SHA-256 and MD5 algorithms.
 
+---
+
+This project allows us to generate hash for both files and texts.
+A toggle button is included which allows us to choose between file and texts.\
+MD5 hashing algorithm is also included.
+
+
+
 # Setting up
+
+# Building
 
 ## Prerequisites
 
@@ -87,8 +97,8 @@ _Below is the rough demonstration of the filetree of the project_
 └── ...
 ```
 
-
 ## Checkout
-
-- [boot.dev](https://blog.boot.dev/cryptography/how-sha-2-works-step-by-step-sha-256/) to learn more on how the algorithm works
-- [this too](https://gist.github.com/hak8or/8794351) 
+_Learn more:_
+- [boot.dev](https://blog.boot.dev/cryptography/how-sha-2-works-step-by-step-sha-256/)
+- [Another SHA-256 implementation](https://gist.github.com/hak8or/8794351)
+- [Secure Hash Standard-NIST](http://dx.doi.org/10.6028/NIST.FIPS.180-4)

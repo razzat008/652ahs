@@ -35,6 +35,15 @@ sudo apt install libsqlite3-dev
 git clone --recurse-submodules https://github.com/razzat008/652ahs
 ```
 
+- Make the install script executable and run it
+```bash
+chmod +x install.sh
+```
+
+```bash
+sudo ./install.sh
+```
+
 - `cd` into **652ahs** and
 
 ```bash
@@ -76,6 +85,7 @@ _Below is the rough demonstration of the filetree of the project_
 │       └── ...
 └── ...
 ```
+
 
 ## Checkout
 

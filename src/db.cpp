@@ -82,7 +82,6 @@ bool Database::getEntry(const std::string &field, double &result) {
 }
 
 bool Database::getEntry(const std::string &field, std::string &result) {
-  // Construct SQL query to get the latest entry based on the highest ID
   std::string sql = "SELECT " + field + " FROM Hashes ORDER BY ID DESC LIMIT 1;";
 
   sqlite3_stmt *stmt;
@@ -93,7 +92,7 @@ bool Database::getEntry(const std::string &field, std::string &result) {
   }
 
   if (sqlite3_step(stmt) == SQLITE_ROW) {
-    const unsigned char *text = sqlite3_column_text(stmt, 0);
+    const unsigned char *text = sqlite3_column_text(stmt, 0); // as sqlite3_column_text returns const unsigned char
     if (text != nullptr) {
       result = reinterpret_cast<const char *>(text);
     } else {

@@ -1,8 +1,8 @@
 # 652ahs
 
-This is an end-semester project done in 1st year 2nd semester at Kathmandu University.
+This is an end-semester project done in 1st year 2nd semester at Kathmandu University. It generates hash of input text or file with SHA-256 and MD5 algorithms.
 
-# Building
+# Setting up
 
 ## Prerequisites
 
@@ -27,7 +27,7 @@ sudo apt install libsqlite3-dev
 ```
 
 
-## Setting up
+## Running the program
 
 - Clone the repository
 
@@ -35,11 +35,12 @@ sudo apt install libsqlite3-dev
 git clone --recurse-submodules https://github.com/razzat008/652ahs
 ```
 
-- Make the install script executable and run it
+- Make the install script executable
 ```bash
 chmod +x install.sh
 ```
 
+- Dependencies needed for the project can be automatically installed using the install script
 ```bash
 sudo ./install.sh
 ```

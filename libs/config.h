@@ -20,10 +20,10 @@
 #include <GLFW/glfw3.h>
 #include <sqlite3.h>
 #include <filesystem>
-#include "../src/db.h"
-#include "../src/gui.h"
-#include "../src/md5.h"
-#include "../src/sha.h"
+#include "../src/db.hpp"
+#include "../src/gui.hpp"
+#include "../src/md5.hpp"
+#include "../src/sha.hpp"
 
 // namespace {
 // char *file_name = "hashfile_db";

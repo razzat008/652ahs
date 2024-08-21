@@ -1,4 +1,4 @@
-#include "gui.h"
+#include "gui.hpp"
 #include "../libs/config.h"
 
 int main() {

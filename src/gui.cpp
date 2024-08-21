@@ -1,9 +1,9 @@
-#include "gui.h"
+#include "gui.hpp"
 #include "../libs/config.h"
-#include "db.h"
+#include "db.hpp"
 #include "imgui.h"
-#include "sha.h"
-#include "md5.h"
+#include "sha.hpp"
+#include "md5.hpp"
 #include <filesystem>
 #include <string>
 

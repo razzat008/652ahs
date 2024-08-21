@@ -1,4 +1,4 @@
-#include "sha.h"
+#include "sha.hpp"
 #include "../libs/config.h"
 
 
